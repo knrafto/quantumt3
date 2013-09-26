@@ -1,10 +1,12 @@
-var Board = (function() { "use strict";
+"use strict";
+var Board = (function() {
 
   /* Extend a target object by copying all properties from a source object
    * to it.
    */
   function extend(target, source) {
-    for (var prop in source) {
+    var prop;
+    for (prop in source) {
       target[prop] = source[prop];
     }
     return target;
@@ -46,10 +48,30 @@ var Board = (function() { "use strict";
   function convertMove(move) {
     if (typeof move === 'string') {
       return parseMove(move);
-    } else if (typeof move === 'object') {
+    }
+    if (typeof move === 'object') {
       return move;
     }
     return null;
+  }
+
+  /* Score a list of tic-tac-toes by giving them a score property. */
+  function scoreTicTacToes(tictactoes) {
+    var i, minPiece = 9, rowMaxPiece;
+
+    function maxPiece(tictactoe) {
+      return Math.max.apply(this, tictactoe.pieces);
+    }
+
+    for (i = 0; i < tictactoes.length; ++i) {
+      rowMaxPiece = maxPiece(tictactoes[i]);
+      if (minPiece > rowMaxPiece) {
+        minPiece = rowMaxPiece;
+      }
+    }
+    for (i = 0; i < tictactoes.length; ++i) {
+      tictactoes[i].score = minPiece === maxPiece(tictactoes[i]) ? 2 : 1;
+    }
   }
 
   var Board = function() {
@@ -87,8 +109,8 @@ var Board = (function() { "use strict";
     },
 
     _countClassicalPieces: function() {
-      var classical = 0;
-      for (var i = 1; i <= 9; ++i) {
+      var i, classical = 0;
+      for (i = 1; i <= 9; ++i) {
         if (!this._isQuantum(i)) {
           ++classical;
         }
@@ -97,9 +119,10 @@ var Board = (function() { "use strict";
     },
 
     clear: function() {
+      var i;
       this._board = [];
       this._edges = [];
-      for (var i = 0; i < 9; ++i) {
+      for (i = 0; i < 9; ++i) {
         this._board[i] = [];
         this._edges[i] = [];
       }
@@ -131,14 +154,13 @@ var Board = (function() { "use strict";
     },
 
     scores: function () {
+      var scores = {}, tictactoes = this._tictactoes, i, tictactoe;
       if (!this.gameOver()) {
         return null;
       }
-      var scores = {};
-      var tictactoes = this._tictactoes;
       scores[Board.PLAYERX] = scores[Board.PLAYERO] = 0;
-      for (var i = 0; i < tictactoes.length; ++i) {
-        var tictactoe = tictactoes[i];
+      for (i = 0; i < tictactoes.length; ++i) {
+        tictactoe = tictactoes[i];
         scores[tictactoe.player] += tictactoe.score;
       }
       return scores;
@@ -154,14 +176,17 @@ var Board = (function() { "use strict";
         a = move.cells[0];
         b = move.cells[1];
         return a && b && this._isQuantum(a) && this._isQuantum(b) && a !== b;
-      } else if (move.type === Board.COLLAPSE) {
+      }
+      if (move.type === Board.COLLAPSE) {
         a = move.cells;
         return a && this._isQuantum(a) &&
                last(this._board[a - 1]) === this._placed;
-      } else {
+      }
+      if (move.type === Board.CLASSICAL) {
         a = move.cells;
         return a && this._isQuantum(a);
       }
+      return false;
     },
 
     _makeMove: function(move) {
@@ -182,7 +207,7 @@ var Board = (function() { "use strict";
         this._nextType = this._countClassicalPieces() === 8 ? Board.CLASSICAL
                                                             : Board.QUANTUM;
         this._updateGameStatus();
-      } else {
+      } else if (move.type === Board.CLASSICAL) {
         a = move.cells;
         this._placed++;
         this._board[a - 1] = this._placed;
@@ -206,15 +231,15 @@ var Board = (function() { "use strict";
     },
 
     _reachable: function(src, dest) {
-      var visited = [];
-      var edges = this._edges;
+      var visited = [], edges = this._edges;
       function visit(i) {
+        var j, neighbors;
         if (visited.indexOf(i) !== -1) {
           return;
         }
         visited.push(i);
-        var neighbors = edges[i - 1];
-        for (var j = 0; j < neighbors.length; ++j) {
+        neighbors = edges[i - 1];
+        for (j = 0; j < neighbors.length; ++j) {
           visit(neighbors[j]);
         }
       }
@@ -228,21 +253,21 @@ var Board = (function() { "use strict";
        * since the moves are ordered, some other move will be collapsed into the
        * other cell before the last move is processed.
        */
+      var j,
+          cell = this._board[i - 1],
+          neighbors = this._edges[i - 1];
       if (!this._isQuantum(i)) {
         return;
       }
-      var cell = this._board[i - 1];
-      var neighbors = this._edges[i - 1];
       this._board[i - 1] = piece;
       this._edges[i - 1] = [];
-      for (var j = 0; j < cell.length; ++j) {
+      for (j = 0; j < cell.length; ++j) {
         this._collapseCell(cell[j], neighbors[j]);
       }
     },
 
     _updateGameStatus: function() {
-      var tictactoes = [];
-      var i, j;
+      var i, j, cells, pieces, player, tictactoes = [];
 
       function isX(c) {
         return typeof c === 'number' && c % 2 === 1;
@@ -252,15 +277,10 @@ var Board = (function() { "use strict";
         return typeof c === 'number' && c % 2 === 0;
       }
 
-      function maxPiece(tictactoe) {
-        return Math.max.apply(this, tictactoe.pieces);
-      }
-
-      // Find tic-tac-toes
       for (i = 0; i < Board.WIN_POSITIONS.length; ++i) {
-        var cells = Board.WIN_POSITIONS[i];
-        var pieces = []
-        var player = null;
+        cells = Board.WIN_POSITIONS[i];
+        pieces = [];
+        player = null;
         for (j = 0; j < cells.length; ++j) {
           pieces.push(this._board[cells[j] - 1]);
         }
@@ -277,20 +297,7 @@ var Board = (function() { "use strict";
         }
       }
 
-      // Score tic-tac-toes
-      if (tictactoes.length) {
-        var minPiece = 9;
-        for (i = 0; i < tictactoes.length; ++i) {
-          var rowMaxPiece = maxPiece(tictactoes[i]);
-          if (minPiece > rowMaxPiece) {
-            minPiece = rowMaxPiece;
-          }
-        }
-        for (i = 0; i < tictactoes.length; ++i) {
-          var score = minPiece === maxPiece(tictactoes[i]) ? 2 : 1;
-          tictactoes[i].score = score;
-        }
-      }
+      scoreTicTacToes(tictactoes);
 
       if (tictactoes.length || this._countClassicalPieces() === 9) {
         this._nextType = null;
@@ -300,4 +307,4 @@ var Board = (function() { "use strict";
   });
 
   return Board;
-})();
+}());

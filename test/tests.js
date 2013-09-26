@@ -80,16 +80,18 @@ suite("Positions", function() {
   positions.forEach(function(position) {
     var b = new Board();
     test(position.moves, function() {
+      var i, expected, actual;
       position.moves.split(' ').forEach(function(move) {
+        var result;
         if (move) {
-          var result = b.move(move);
+          result = b.move(move);
           assert.isNotNull(result, "unsuccessful move " + move);
         }
       });
 
-      for (var i = 1; i <= 9; ++i) {
-        var expected = position.board[i - 1];
-        var actual = b.get(i).pieces;
+      for (i = 1; i <= 9; ++i) {
+        expected = position.board[i - 1];
+        actual = b.get(i).pieces;
         if (Array.isArray(expected)) {
           assert.deepEqual(expected, actual);
         } else {
@@ -145,13 +147,14 @@ suite("Moves", function() {
   positions.forEach(function(position) {
     var b = new Board();
     test(position.start + ' (' + position.move + ')', function() {
+      var result;
       position.start.split(' ').forEach(function(move) {
         if (move) {
           b.move(move);
         }
       });
       assert.strictEqual(b.canMove(position.move), position.legal);
-      var result = b.move(position.move);
+      result = b.move(position.move);
       if (position.legal) {
         assert.deepEqual(result, position.result);
       } else {

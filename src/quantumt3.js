@@ -228,25 +228,33 @@ var Board = (function() { "use strict";
 
     _updateGameStatus: function() {
       var tictactoes = [];
-      var board = this._board;
 
       function isX(c) {
-        var cell = board[c - 1];
-        return typeof cell === 'number' && cell % 2 === 1;
+        return typeof c === 'number' && c % 2 === 1;
       }
 
       function isO(c) {
-        var cell = board[c - 1];
-        return typeof cell === 'number' && cell % 2 === 0;
+        return typeof c === 'number' && c % 2 === 0;
       }
 
       for (var i = 0; i < Board.WIN_POSITIONS.length; ++i) {
         var position = Board.WIN_POSITIONS[i];
-        if (position.every(isX)) {
-          tictactoes.push({ player: Board.PLAYERX, cells: position });
-        } else if (position.every(isO)) {
-          tictactoes.push({ player: Board.PLAYERO, cells: position });
-        }  
+        var pieces = []
+        var player = null;
+        for (var j = 0; j < position.length; ++j) {
+          pieces.push(this._board[position[j] - 1]);
+        }
+        if (pieces.every(isX)) {
+          player = Board.PLAYERX;
+        } else if (pieces.every(isO)) {
+          player = Board.PLAYERO;
+        }
+        if (player) {
+          tictactoes.push({
+            player: player,
+            cells: position,
+            pieces: pieces});
+        }
       }
 
       if (tictactoes.length || this._countClassicalPieces() === 9) {

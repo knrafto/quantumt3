@@ -72,3 +72,54 @@ suite("Positions", function() {
     });
   });
 });
+
+suite("Moves", function() {
+  var positions = [
+    {start: "",
+      move: "1-2",
+      legal: true,
+      result: { type: Board.QUANTUM, cells: [1, 2] }},
+    {start: "1-2 2-3 1-3",
+      move: "->1",
+      legal: true,
+      result: { type: Board.COLLAPSE, cells: 1 }},
+    {start: "1-4 6-7 5-8 5-9 2-5 2-4 1-2 ->1 6-7 ->6",
+      move: "3",
+      legal: true,
+      result: { type: Board.CLASSICAL, cells: 3 }},
+    {start: "",
+      move: "1-1",
+      legal: false},
+    {start: "",
+      move: "->1",
+      legal: false},
+    {start: "",
+      move: "1",
+      legal: false},
+    {start: "1-2 2-3 1-3",
+      move: "4-5",
+      legal: false},
+    {start: "1-2 2-3 1-3 ->1",
+      move: "3-4",
+      legal: false},
+    {start: "1-2 2-3 1-3 ->1",
+      move: "->3",
+      legal: false}
+  ];
+  positions.forEach(function(position) {
+    var b = new Board();
+    test(position.start + ' (' + position.move + ')', function() {
+      position.start.split(' ').forEach(function(move) {
+        if (move) {
+          b.move(move);
+        }
+      });
+      var result = b.move(position.move);
+      if (position.legal) {
+        assert.deepEqual(result, position.result);
+      } else {
+        assert.isNull(result);
+      }
+    });
+  });
+});

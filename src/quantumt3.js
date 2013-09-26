@@ -10,11 +10,6 @@ var Board = (function() { "use strict";
     return target;
   }
 
-  /* Return whether a value is a number type. */
-  function isNumber(x) {
-    return typeof x === 'number';
-  }
-
   /* Return the last element of an array. */
   function last(arr) {
     return arr[arr.length - 1];
@@ -41,6 +36,16 @@ var Board = (function() { "use strict";
       if (a) {
         return { type: Board.CLASSICAL, cells: a };
       }
+    }
+    return null;
+  }
+
+  /* Take either a string or a move object, and return a move object. */
+  function convertMove(move) {
+    if (typeof move === 'string') {
+      return parseMove(move);
+    } else if (typeof move === 'object') {
+      return move;
     }
     return null;
   }
@@ -123,8 +128,8 @@ var Board = (function() { "use strict";
       return this._tictactoes;
     },
 
-    canMove: function (move) {
-      if (move.type !== this._nextType) {
+    _canMove: function (move) {
+      if (!move || move.type !== this._nextType) {
         return false;
       }
 
@@ -165,15 +170,14 @@ var Board = (function() { "use strict";
       }
     },
 
-    move: function(move) {
-      var moveObj = null;
-      if (typeof move === 'string') {
-        moveObj = parseMove(move);
-      } else if (typeof move === 'object') {
-        moveObj = move;
-      }
+    canMove: function(move) {
+      return this._canMove(convertMove(move));
+    },
 
-      if (!moveObj || !this.canMove(moveObj)) {
+    move: function(move) {
+      var moveObj = convertMove(move);
+
+      if (!this._canMove(moveObj)) {
         return null;
       }
 
@@ -222,12 +226,12 @@ var Board = (function() { "use strict";
 
       function isX(c) {
         var cell = board[c - 1];
-        return isNumber(cell) && cell % 2 == 1;
+        return typeof cell === 'number' && cell % 2 == 1;
       }
 
       function isO(c) {
         var cell = board[c - 1];
-        return isNumber(cell) && cell % 2 == 0;
+        return typeof cell === 'number' && cell % 2 == 0;
       }
 
       for (var i = 0; i < Board.WIN_POSITIONS.length; ++i) {

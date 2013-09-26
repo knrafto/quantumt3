@@ -114,6 +114,7 @@ suite("Moves", function() {
           b.move(move);
         }
       });
+      assert.strictEqual(b.canMove(position.move), position.legal);
       var result = b.move(position.move);
       if (position.legal) {
         assert.deepEqual(result, position.result);

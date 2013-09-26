@@ -21,18 +21,20 @@ var Board = (function() { "use strict";
    * Classical: '8'
    */
   function parseMove(s) {
+    var a, b;
     if (s.match(/\d-\d/)) {
-      var a = +s.charAt(0), b = +s.charAt(2);
+      a = +s.charAt(0);
+      b = +s.charAt(2);
       if (a && b) {
         return { type: Board.QUANTUM, cells: [a, b] };
       }      
     } else if (s.match(/->\d/)) {
-      var a = +s.charAt(2);
+      a = +s.charAt(2);
       if (a) {
         return { type: Board.COLLAPSE, cells: a };
       }
     } else if (s.match(/\d/)) {
-      var a = +s;
+      a = +s;
       if (a) {
         return { type: Board.CLASSICAL, cells: a };
       }
@@ -133,22 +135,26 @@ var Board = (function() { "use strict";
         return false;
       }
 
+      var a, b;
       if (move.type === Board.QUANTUM) {
-        var a = move.cells[0], b = move.cells[1];
+        a = move.cells[0];
+        b = move.cells[1];
         return a && b && this._isQuantum(a) && this._isQuantum(b) && a !== b;
       } else if (move.type === Board.COLLAPSE) {
-        var a = move.cells;
+        a = move.cells;
         return a && this._isQuantum(a) &&
                last(this._board[a - 1]) === this._placed;
       } else {
-        var a = move.cells;
+        a = move.cells;
         return a && this._isQuantum(a);
       }
     },
 
     _makeMove: function(move) {
+      var a, b;
       if (move.type === Board.QUANTUM) {
-        var a = move.cells[0], b = move.cells[1];
+        a = move.cells[0];
+        b = move.cells[1];
         this._placed++;
         this._nextType = this._reachable(a, b) ? Board.COLLAPSE
                                                : Board.QUANTUM;
@@ -157,13 +163,13 @@ var Board = (function() { "use strict";
         this._edges[a - 1].push(b);
         this._edges[b - 1].push(a);
       } else if (move.type === Board.COLLAPSE) {
-        var a = move.cells;
+        a = move.cells;
         this._collapseCell(this._placed, a);
-        this._nextType = this._countClassicalPieces() == 8 ? Board.CLASSICAL
-                                                           : Board.QUANTUM;
+        this._nextType = this._countClassicalPieces() === 8 ? Board.CLASSICAL
+                                                            : Board.QUANTUM;
         this._updateGameStatus();
       } else {
-        var a = move.cells;
+        a = move.cells;
         this._placed++;
         this._board[a - 1] = this._placed;
         this._updateGameStatus();
@@ -226,12 +232,12 @@ var Board = (function() { "use strict";
 
       function isX(c) {
         var cell = board[c - 1];
-        return typeof cell === 'number' && cell % 2 == 1;
+        return typeof cell === 'number' && cell % 2 === 1;
       }
 
       function isO(c) {
         var cell = board[c - 1];
-        return typeof cell === 'number' && cell % 2 == 0;
+        return typeof cell === 'number' && cell % 2 === 0;
       }
 
       for (var i = 0; i < Board.WIN_POSITIONS.length; ++i) {

@@ -228,6 +228,7 @@ var Board = (function() { "use strict";
 
     _updateGameStatus: function() {
       var tictactoes = [];
+      var i, j;
 
       function isX(c) {
         return typeof c === 'number' && c % 2 === 1;
@@ -237,12 +238,17 @@ var Board = (function() { "use strict";
         return typeof c === 'number' && c % 2 === 0;
       }
 
-      for (var i = 0; i < Board.WIN_POSITIONS.length; ++i) {
-        var position = Board.WIN_POSITIONS[i];
+      function maxPiece(tictactoe) {
+        return Math.max.apply(this, tictactoe.pieces);
+      }
+
+      // Find tic-tac-toes
+      for (i = 0; i < Board.WIN_POSITIONS.length; ++i) {
+        var cells = Board.WIN_POSITIONS[i];
         var pieces = []
         var player = null;
-        for (var j = 0; j < position.length; ++j) {
-          pieces.push(this._board[position[j] - 1]);
+        for (j = 0; j < cells.length; ++j) {
+          pieces.push(this._board[cells[j] - 1]);
         }
         if (pieces.every(isX)) {
           player = Board.PLAYERX;
@@ -252,8 +258,23 @@ var Board = (function() { "use strict";
         if (player) {
           tictactoes.push({
             player: player,
-            cells: position,
+            cells: cells,
             pieces: pieces});
+        }
+      }
+
+      // Score tic-tac-toes
+      if (tictactoes.length) {
+        var minPiece = 9;
+        for (i = 0; i < tictactoes.length; ++i) {
+          var rowMaxPiece = maxPiece(tictactoes[i]);
+          if (minPiece > rowMaxPiece) {
+            minPiece = rowMaxPiece;
+          }
+        }
+        for (i = 0; i < tictactoes.length; ++i) {
+          var score = minPiece === maxPiece(tictactoes[i]) ? 2 : 1;
+          tictactoes[i].score = score;
         }
       }
 

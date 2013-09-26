@@ -130,6 +130,20 @@ var Board = (function() { "use strict";
       return this._tictactoes;
     },
 
+    scores: function () {
+      if (!this.gameOver()) {
+        return null;
+      }
+      var scores = {};
+      var tictactoes = this._tictactoes;
+      scores[Board.PLAYERX] = scores[Board.PLAYERO] = 0;
+      for (var i = 0; i < tictactoes.length; ++i) {
+        var tictactoe = tictactoes[i];
+        scores[tictactoe.player] += tictactoe.score;
+      }
+      return scores;
+    },
+
     _canMove: function (move) {
       if (!move || move.type !== this._nextType) {
         return false;

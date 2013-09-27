@@ -78,9 +78,8 @@ suite("Positions", function() {
   ];
 
   positions.forEach(function(position) {
-    var b = new Board();
     test(position.moves, function() {
-      var i, expected, actual;
+      var b = new Board(), i, expected, actual;
       position.moves.split(' ').forEach(function(move) {
         var result;
         if (move) {
@@ -98,8 +97,10 @@ suite("Positions", function() {
           assert.strictEqual(expected, actual);
         }
       }
+
       assert.equal(b.turn(), position.turn);
       assert.strictEqual(b.gameOver(), position.gameOver);
+
       if (position.gameOver) {
         assert.deepEqual(b.tictactoes(), position.tictactoes);
         assert.deepEqual(b.scores(), position.scores);
@@ -145,21 +146,51 @@ suite("Moves", function() {
       legal: false}
   ];
   positions.forEach(function(position) {
-    var b = new Board();
     test(position.start + ' (' + position.move + ')', function() {
-      var result;
+      var b = new Board(), result;
       position.start.split(' ').forEach(function(move) {
         if (move) {
           b.move(move);
         }
       });
+
       assert.strictEqual(b.canMove(position.move), position.legal);
+
       result = b.move(position.move);
       if (position.legal) {
         assert.deepEqual(result, position.result);
       } else {
         assert.isNull(result);
       }
+    });
+  });
+});
+
+suite('History/Undo', function() {
+  var positions = [];
+  positions.forEach(function(position) {
+    test(position.start + ' (' + position.move + ')', function() {
+      var b1 = new Board(), b2 = new Board(),
+          moveResult, undoResult, i;
+      position.start.split(' ').forEach(function(move) {
+        if (move) {
+          b1.move(move);
+          b2.move(move);
+        }
+      });
+      moveResult = b1.move(position.move);
+      undoResult = b1.undo();
+      assert.deepEqual(undoResult, moveResult);
+
+      assert.equal(b1.history(false).join(' '), position.start);
+
+      for (i = 1; i <= 9; ++i) {
+        assert.deepEqual(b1.get(i), b2.get(i));
+      }
+      assert.deepEqual(b1.turn(), b2.turn());
+      assert.deepEqual(b1.gameOver(), b2.gameOver());
+      assert.deepEqual(b1.tictactoes(), b2.tictactoes());
+      assert.deepEqual(b2.scores(), b2.scores());
     });
   });
 });

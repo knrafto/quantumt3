@@ -167,7 +167,16 @@ suite("Moves", function() {
 });
 
 suite('History/Undo', function() {
-  var positions = [];
+  var positions = [
+    {start: "1-2 2-3",
+      move: "1-3"},
+    {start: "1-4 6-7 5-8 5-9 2-5 2-4 1-2",
+      move: "->1"},
+    {start: "1-4 6-7 5-8 5-9 2-5 2-4 1-2 ->1 6-7 ->6",
+      move: "3"},
+    {start: "1-3 2-4 3-5 4-6 5-7 6-8 7-9 2-8 ->8 1-5",
+      move: "->1"}
+  ];
   positions.forEach(function(position) {
     test(position.start + ' (' + position.move + ')', function() {
       var b1 = new Board(), b2 = new Board(),
@@ -182,7 +191,7 @@ suite('History/Undo', function() {
       undoResult = b1.undo();
       assert.deepEqual(undoResult, moveResult);
 
-      assert.equal(b1.history(false).join(' '), position.start);
+      assert.equal(b1.history().join(' '), position.start);
 
       for (i = 1; i <= 9; ++i) {
         assert.deepEqual(b1.get(i), b2.get(i));

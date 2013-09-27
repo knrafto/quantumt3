@@ -104,20 +104,6 @@ var Board = (function() {
 
   // Prototype methods
   extend(Board.prototype, {
-    _isQuantum: function(i) {
-      return Array.isArray(this._board[i - 1]);
-    },
-
-    _countClassicalPieces: function() {
-      var i, classical = 0;
-      for (i = 1; i <= 9; ++i) {
-        if (!this._isQuantum(i)) {
-          ++classical;
-        }
-      }
-      return classical;
-    },
-
     clear: function() {
       var i;
       this._board = [];
@@ -164,6 +150,35 @@ var Board = (function() {
         scores[tictactoe.player] += tictactoe.score;
       }
       return scores;
+    },
+
+    canMove: function(move) {
+      return this._canMove(convertMove(move));
+    },
+
+    move: function(move) {
+      var moveObj = convertMove(move);
+
+      if (!this._canMove(moveObj)) {
+        return null;
+      }
+
+      this._makeMove(moveObj);
+      return moveObj;
+    },
+
+    _isQuantum: function(i) {
+      return Array.isArray(this._board[i - 1]);
+    },
+
+    _countClassicalPieces: function() {
+      var i, classical = 0;
+      for (i = 1; i <= 9; ++i) {
+        if (!this._isQuantum(i)) {
+          ++classical;
+        }
+      }
+      return classical;
     },
 
     _canMove: function (move) {
@@ -213,21 +228,6 @@ var Board = (function() {
         this._board[a - 1] = this._placed;
         this._updateGameStatus();
       }
-    },
-
-    canMove: function(move) {
-      return this._canMove(convertMove(move));
-    },
-
-    move: function(move) {
-      var moveObj = convertMove(move);
-
-      if (!this._canMove(moveObj)) {
-        return null;
-      }
-
-      this._makeMove(moveObj);
-      return moveObj;
     },
 
     _reachable: function(src, dest) {

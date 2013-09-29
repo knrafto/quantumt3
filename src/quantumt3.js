@@ -12,6 +12,15 @@ var Board = (function() {
     return target;
   }
 
+  /* Copy an array. */
+  function arrayCopy(source) {
+    var i, len = source.length, target = new Array(len);
+    for (i = 0; i < len; ++i) {
+      target[i] = source[i];
+    }
+    return target;
+  }
+
   /* Return the last element of an array. */
   function last(arr) {
     return arr[arr.length - 1];
@@ -249,15 +258,16 @@ var Board = (function() {
         a = move.cells[0];
         b = move.cells[1];
         this._placed++;
-        if (this._reachable(a).indexOf(b) != -1) {
+        if (this._reachable(a, b)) {
             this._nextType = Board.COLLAPSE;
         }
         this._board[a - 1].push(this._placed);
         this._board[b - 1].push(this._placed);
-        this._edges[a - 1].push([this._placed, b]);
-        this._edges[b - 1].push([this._placed, a]);
+        this._edges[a - 1].push(b);
+        this._edges[b - 1].push(a);
       } else if (move.type === Board.COLLAPSE) {
         a = move.cells;
+        this._collapseStates.push(arrayCopy(this._board));
         this._collapseCell(this._placed, a);
         this._nextType = this._countClassicalPieces() === 8 ? Board.CLASSICAL
                                                             : Board.QUANTUM;
@@ -283,8 +293,7 @@ var Board = (function() {
         this._edges[a - 1].pop();
         this._edges[b - 1].pop();
       } else if (move.type === Board.COLLAPSE) {
-        a = move.cells;
-        this._uncollapseCell(a);
+        this._board = this._collapseStates.pop();
       } else if (move.type === Board.CLASSICAL) {
         a = move.cells;
         this._placed--;
@@ -302,12 +311,12 @@ var Board = (function() {
         visited.push(i);
         neighbors = edges[i - 1];
         for (j = 0; j < neighbors.length; ++j) {
-          visit(neighbors[j][1]);
+          visit(neighbors[j]);
         }
       }
 
       visit(src);
-      return visited;
+      return visited.indexOf(dest) !== -1;
     },
 
     _collapseCell: function(piece, i) {
@@ -315,28 +324,13 @@ var Board = (function() {
        * since the moves are ordered, some other move will be collapsed into the
        * other cell before the last move is processed.
        */
-      var neighbors = this._edges[i - 1], neighbor, j;
+      var neighbors = this._edges[i - 1], cells = this._board[i - 1], j;
       if (!this._isQuantum(i)) {
         return;
       }
       this._board[i - 1] = piece;
       for (j = 0; j < neighbors.length; ++j) {
-        neighbor = neighbors[j];
-        this._collapseCell(neighbor[0], neighbor[1]);
-      }
-    },
-
-    _uncollapseCell: function(i) {
-      var reachable = this._reachable(i), neighbors,
-          j, k, c, pieces;
-      for (j = 0; j < reachable.length; ++j) {
-        c = reachable[j];
-        neighbors = this._edges[c - 1];
-        pieces = [];
-        for (k = 0; k < neighbors.length; ++k) {
-          pieces[k] = neighbors[k][0];
-        }
-        this._board[c - 1] = pieces;
+        this._collapseCell(cells[j], neighbors[j]);
       }
     },
 

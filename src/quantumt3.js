@@ -1,7 +1,7 @@
 "use strict";
 var Board = (function() {
 
-  /* Copy an array. */
+  /* Make a shallow copy of an array. */
   function arrayCopy(source) {
     var i, len = source.length, target = new Array(len);
     for (i = 0; i < len; ++i) {

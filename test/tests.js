@@ -1,5 +1,15 @@
 var assert = chai.assert;
 
+function moveAll(b, start) {
+  start.split(' ').forEach(function(move) {
+    var result;
+    if (move) {
+      result = b.move(move);
+      assert.isNotNull(result, "unsuccessful move " + move);
+    }
+  });
+}
+
 suite("Positions", function() {
   function makeScore(arr) {
     var scores = {}
@@ -9,25 +19,25 @@ suite("Positions", function() {
   }
 
   var positions = [
-    {moves: "",
+    {start: "",
       board: [[], [], [], [], [], [], [], [], []],
       turn: Board.PLAYERX,
       gameOver: false},
-    {moves: "1-9 1-3 3-4",
+    {start: "1-9 1-3 3-4",
       board: [[1, 2], [], [2, 3], [3], [], [], [], [], [1]],
       turn: Board.PLAYERO,
       gameOver: false},
-    {moves: "1-4 6-7 5-8 5-9 2-5 2-4 1-2 ->1",
+    {start: "1-4 6-7 5-8 5-9 2-5 2-4 1-2 ->1",
       board: [7, 6, [], 1, 5, [2], [2], 3, 4],
       turn: Board.PLAYERO,
       gameOver: false},
-    {moves: "1-4 6-7 5-8 5-9 2-5 2-4 1-2 ->1 6-7 ->6 3",
+    {start: "1-4 6-7 5-8 5-9 2-5 2-4 1-2 ->1 6-7 ->6 3",
       board: [7, 6, 9, 1, 5, 8, 2, 3, 4],
       turn: Board.PLAYERO,
       gameOver: true,
       tictactoes: [],
       scores: makeScore([0, 0])},
-    {moves: "1-5 5-6 2-5 3-6 3-5 ->3",
+    {start: "1-5 5-6 2-5 3-6 3-5 ->3",
       board: [1, 3, 5, [], 2, 4, [], [], []],
       turn: Board.PLAYERO,
       gameOver: true,
@@ -36,7 +46,7 @@ suite("Positions", function() {
                      pieces: [1, 3, 5],
                      score: 2}],
       scores: makeScore([2, 0])},
-    {moves: "1-7 1-4 1-2 1-5 1-3 1-6 1-7 ->1",
+    {start: "1-7 1-4 1-2 1-5 1-3 1-6 1-7 ->1",
       board: [7, 3, 5, 2, 4, 6, 1, [], []],
       turn: Board.PLAYERO,
       gameOver: true,
@@ -49,7 +59,7 @@ suite("Positions", function() {
                      pieces: [2, 4, 6],
                      score: 2}],
       scores: makeScore([1, 2])},
-    {moves: "1-3 2-4 3-5 4-6 5-7 6-8 7-9 2-8 ->8 1-5 ->1",
+    {start: "1-3 2-4 3-5 4-6 5-7 6-8 7-9 2-8 ->8 1-5 ->1",
       board: [9, 2, 1, 4, 3, 6, 5, 8, 7],
       turn: Board.PLAYERO,
       gameOver: true,
@@ -62,7 +72,7 @@ suite("Positions", function() {
                      pieces: [1, 3, 5],
                      score: 2}],
       scores: makeScore([3, 0])},
-    {moves: "1-3 2-4 3-7 4-6 7-9 6-8 9-1 ->9 2-8 ->8 5",
+    {start: "1-3 2-4 3-7 4-6 7-9 6-8 9-1 ->9 2-8 ->8 5",
       board: [1, 2, 3, 4, 9, 6, 5, 8, 7],
       turn: Board.PLAYERO,
       gameOver: true,
@@ -78,15 +88,9 @@ suite("Positions", function() {
   ];
 
   positions.forEach(function(position) {
-    test(position.moves, function() {
+    test(position.start, function() {
       var b = new Board();
-      position.moves.split(' ').forEach(function(move) {
-        var result;
-        if (move) {
-          result = b.move(move);
-          assert.isNotNull(result, "unsuccessful move " + move);
-        }
-      });
+      moveAll(b, position.start);
 
       assert.deepEqual(b.board(), position.board);
       assert.equal(b.turn(), position.turn);
@@ -139,11 +143,7 @@ suite("Moves", function() {
   positions.forEach(function(position) {
     test(position.start + ' (' + position.move + ')', function() {
       var b = new Board(), result;
-      position.start.split(' ').forEach(function(move) {
-        if (move) {
-          b.move(move);
-        }
-      });
+      moveAll(b, position.start)
 
       assert.strictEqual(b.canMove(position.move), position.legal);
 
@@ -172,12 +172,9 @@ suite('History/Undo', function() {
     test(position.start + ' (' + position.move + ')', function() {
       var b1 = new Board(), b2 = new Board(),
           moveResult, undoResult;
-      position.start.split(' ').forEach(function(move) {
-        if (move) {
-          b1.move(move);
-          b2.move(move);
-        }
-      });
+      moveAll(b1, position.start);
+      moveAll(b2, position.start);
+
       moveResult = b1.move(position.move);
       undoResult = b1.undo();
       assert.deepEqual(undoResult, moveResult);

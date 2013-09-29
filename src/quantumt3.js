@@ -42,7 +42,7 @@ var Board = (function() {
     return null;
   }
 
-  /* Render a move as a string, */
+  /* Render a move as a string. The inverse of parseMove(s). */
   function stringifyMove(move) {
     if (!move) {
       return '';
@@ -68,25 +68,6 @@ var Board = (function() {
       return move;
     }
     return null;
-  }
-
-  /* Score a list of tic-tac-toes by giving them a score property. */
-  function scoreTicTacToes(tictactoes) {
-    var i, minPiece = 9, rowMaxPiece;
-
-    function maxPiece(tictactoe) {
-      return Math.max.apply(this, tictactoe.pieces);
-    }
-
-    for (i = 0; i < tictactoes.length; ++i) {
-      rowMaxPiece = maxPiece(tictactoes[i]);
-      if (minPiece > rowMaxPiece) {
-        minPiece = rowMaxPiece;
-      }
-    }
-    for (i = 0; i < tictactoes.length; ++i) {
-      tictactoes[i].score = minPiece === maxPiece(tictactoes[i]) ? 2 : 1;
-    }
   }
 
   var Board = function() {
@@ -322,7 +303,8 @@ var Board = (function() {
     },
 
     _updateGameStatus: function() {
-      var i, j, cells, pieces, player, tictactoes = [];
+      var i, j, cells, pieces, player, tictactoes = [],
+          minPiece = 9, rowMaxPiece;
 
       function isX(c) {
         return typeof c === 'number' && c % 2 === 1;
@@ -332,6 +314,11 @@ var Board = (function() {
         return typeof c === 'number' && c % 2 === 0;
       }
 
+      function maxPiece(tictactoe) {
+        return Math.max.apply(this, tictactoe.pieces);
+      }
+
+      // Find tic-tac-toes
       for (i = 0; i < Board.WIN_POSITIONS.length; ++i) {
         cells = Board.WIN_POSITIONS[i];
         pieces = [];
@@ -352,7 +339,16 @@ var Board = (function() {
         }
       }
 
-      scoreTicTacToes(tictactoes);
+      // Score tic-tac-toes
+      for (i = 0; i < tictactoes.length; ++i) {
+        rowMaxPiece = maxPiece(tictactoes[i]);
+        if (minPiece > rowMaxPiece) {
+          minPiece = rowMaxPiece;
+        }
+      }
+      for (i = 0; i < tictactoes.length; ++i) {
+        tictactoes[i].score = minPiece === maxPiece(tictactoes[i]) ? 2 : 1;
+      }
 
       if (tictactoes.length || this._countClassicalPieces() === 9) {
         this._nextType = null;

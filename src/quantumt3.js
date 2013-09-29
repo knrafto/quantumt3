@@ -115,6 +115,10 @@ var Board = (function() {
       this._collapseStates = [];
     },
 
+    board: function() {
+      return this._board;
+    },
+
     get: function(i) {
       var cell = this._board[i - 1];
       return cell ?

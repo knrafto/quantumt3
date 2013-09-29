@@ -79,7 +79,7 @@ suite("Positions", function() {
 
   positions.forEach(function(position) {
     test(position.moves, function() {
-      var b = new Board(), i, expected, actual;
+      var b = new Board();
       position.moves.split(' ').forEach(function(move) {
         var result;
         if (move) {
@@ -88,16 +88,7 @@ suite("Positions", function() {
         }
       });
 
-      for (i = 1; i <= 9; ++i) {
-        expected = position.board[i - 1];
-        actual = b.get(i).pieces;
-        if (Array.isArray(expected)) {
-          assert.deepEqual(expected, actual);
-        } else {
-          assert.strictEqual(expected, actual);
-        }
-      }
-
+      assert.deepEqual(b.board(), position.board);
       assert.equal(b.turn(), position.turn);
       assert.strictEqual(b.gameOver(), position.gameOver);
 
@@ -180,7 +171,7 @@ suite('History/Undo', function() {
   positions.forEach(function(position) {
     test(position.start + ' (' + position.move + ')', function() {
       var b1 = new Board(), b2 = new Board(),
-          moveResult, undoResult, i;
+          moveResult, undoResult;
       position.start.split(' ').forEach(function(move) {
         if (move) {
           b1.move(move);
@@ -193,9 +184,7 @@ suite('History/Undo', function() {
 
       assert.equal(b1.history().join(' '), position.start);
 
-      for (i = 1; i <= 9; ++i) {
-        assert.deepEqual(b1.get(i), b2.get(i));
-      }
+      assert.deepEqual(b1.board(), b2.board());
       assert.deepEqual(b1.turn(), b2.turn());
       assert.deepEqual(b1.gameOver(), b2.gameOver());
       assert.deepEqual(b1.tictactoes(), b2.tictactoes());

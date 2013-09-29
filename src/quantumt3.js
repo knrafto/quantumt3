@@ -44,6 +44,23 @@ var Board = (function() {
     return null;
   }
 
+  /* Render a move as a string, */
+  function stringifyMove(move) {
+    if (!move) {
+      return '';
+    }
+    if (move.type === Board.QUANTUM) {
+      return move.cells[0] + '-' + move.cells[1];
+    }
+    if (move.type === Board.COLLAPSE) {
+      return '->' + move.cells;
+    }
+    if (move.type === Board.CLASSICAL) {
+      return move.cells.toString();
+    }
+    return '';
+  }
+
   /* Take either a string or a move object, and return a move object. */
   function convertMove(move) {
     if (typeof move === 'string') {
@@ -115,8 +132,10 @@ var Board = (function() {
 
       this._placed = 0;
       this._nextType = Board.QUANTUM;
-
       this._tictactoes = [];
+
+      this._history = [];
+      this._collapseStates = [];
     },
 
     get: function(i) {
@@ -163,7 +182,27 @@ var Board = (function() {
         return null;
       }
 
-      this._makeMove(moveObj);
+      this._history.push(moveObj);
+      this._applyMove(moveObj);
+      return moveObj;
+    },
+
+    history: function(verbose) {
+      var history = this._history, terseHistory = [], i;
+      if (verbose) {
+        return history;
+      }
+      for (i = 0; i < history.length; ++i) {
+        terseHistory[i] = stringifyMove(history[i]);
+      }
+      return terseHistory;
+    },
+
+    undo: function() {
+      var moveObj = this._history.pop();
+      if (moveObj) {
+        this._unapplyMove(moveObj);
+      }
       return moveObj;
     },
 
@@ -204,18 +243,19 @@ var Board = (function() {
       return false;
     },
 
-    _makeMove: function(move) {
+    _applyMove: function(move) {
       var a, b;
       if (move.type === Board.QUANTUM) {
         a = move.cells[0];
         b = move.cells[1];
         this._placed++;
-        this._nextType = this._reachable(a, b) ? Board.COLLAPSE
-                                               : Board.QUANTUM;
+        if (this._reachable(a).indexOf(b) != -1) {
+            this._nextType = Board.COLLAPSE;
+        }
         this._board[a - 1].push(this._placed);
         this._board[b - 1].push(this._placed);
-        this._edges[a - 1].push(b);
-        this._edges[b - 1].push(a);
+        this._edges[a - 1].push([this._placed, b]);
+        this._edges[b - 1].push([this._placed, a]);
       } else if (move.type === Board.COLLAPSE) {
         a = move.cells;
         this._collapseCell(this._placed, a);
@@ -230,6 +270,28 @@ var Board = (function() {
       }
     },
 
+    _unapplyMove: function(move) {
+      var a, b, collapseState;
+      this._nextType = move.type;
+      this._tictactoes = [];
+      if (move.type === Board.QUANTUM) {
+        a = move.cells[0];
+        b = move.cells[1];
+        this._placed--;
+        this._board[a - 1].pop();
+        this._board[b - 1].pop();
+        this._edges[a - 1].pop();
+        this._edges[b - 1].pop();
+      } else if (move.type === Board.COLLAPSE) {
+        a = move.cells;
+        this._uncollapseCell(a);
+      } else if (move.type === Board.CLASSICAL) {
+        a = move.cells;
+        this._placed--;
+        this._board[a - 1] = [];
+      }
+    },
+
     _reachable: function(src, dest) {
       var visited = [], edges = this._edges;
       function visit(i) {
@@ -240,12 +302,12 @@ var Board = (function() {
         visited.push(i);
         neighbors = edges[i - 1];
         for (j = 0; j < neighbors.length; ++j) {
-          visit(neighbors[j]);
+          visit(neighbors[j][1]);
         }
       }
 
       visit(src);
-      return visited.indexOf(dest) !== -1;
+      return visited;
     },
 
     _collapseCell: function(piece, i) {
@@ -253,16 +315,28 @@ var Board = (function() {
        * since the moves are ordered, some other move will be collapsed into the
        * other cell before the last move is processed.
        */
-      var j,
-          cell = this._board[i - 1],
-          neighbors = this._edges[i - 1];
+      var neighbors = this._edges[i - 1], neighbor, j;
       if (!this._isQuantum(i)) {
         return;
       }
       this._board[i - 1] = piece;
-      this._edges[i - 1] = [];
-      for (j = 0; j < cell.length; ++j) {
-        this._collapseCell(cell[j], neighbors[j]);
+      for (j = 0; j < neighbors.length; ++j) {
+        neighbor = neighbors[j];
+        this._collapseCell(neighbor[0], neighbor[1]);
+      }
+    },
+
+    _uncollapseCell: function(i) {
+      var reachable = this._reachable(i), neighbors,
+          j, k, c, pieces;
+      for (j = 0; j < reachable.length; ++j) {
+        c = reachable[j];
+        neighbors = this._edges[c - 1];
+        pieces = [];
+        for (k = 0; k < neighbors.length; ++k) {
+          pieces[k] = neighbors[k][0];
+        }
+        this._board[c - 1] = pieces;
       }
     },
 
@@ -282,7 +356,7 @@ var Board = (function() {
         pieces = [];
         player = null;
         for (j = 0; j < cells.length; ++j) {
-          pieces.push(this._board[cells[j] - 1]);
+          pieces[j] = this._board[cells[j] - 1];
         }
         if (pieces.every(isX)) {
           player = Board.PLAYERX;

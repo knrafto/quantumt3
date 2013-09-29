@@ -129,7 +129,7 @@ var Board = (function() {
   });
 
   // Prototype methods
-  extend(Board.prototype, {
+  Board.prototype = {
     clear: function() {
       var i;
       this._board = [];
@@ -372,7 +372,7 @@ var Board = (function() {
       }
       this._tictactoes = tictactoes;
     }
-  });
+  };
 
   return Board;
 }());

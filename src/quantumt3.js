@@ -1,17 +1,6 @@
 "use strict";
 var Board = (function() {
 
-  /* Extend a target object by copying all properties from a source object
-   * to it.
-   */
-  function extend(target, source) {
-    var prop;
-    for (prop in source) {
-      target[prop] = source[prop];
-    }
-    return target;
-  }
-
   /* Copy an array. */
   function arrayCopy(source) {
     var i, len = source.length, target = new Array(len);
@@ -105,28 +94,26 @@ var Board = (function() {
   };
 
   // Public class constants
-  extend(Board, {
-    QUANTUM: 'quantum',
-    COLLAPSE: 'collapse',
-    CLASSICAL: 'classical',
+  Board.QUANTUM = 'quantum';
+  Board.COLLAPSE = 'collapse';
+  Board.CLASSICAL = 'classical';
 
-    PLAYERX: 'X',
-    PLAYERO: 'O',
+  Board.PLAYERX = 'X';
+  Board.PLAYERO = 'O';
 
-    WIN_POSITIONS: [
-      // Rows
-      [1, 2, 3],
-      [4, 5, 6],
-      [7, 8, 9],
-      // Columns
-      [1, 4, 7],
-      [2, 5, 8],
-      [3, 6, 9],
-      // Diagonals
-      [1, 5, 9],
-      [3, 5, 7]
-    ]
-  });
+  Board.WIN_POSITIONS = [
+    // Rows
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9],
+    // Columns
+    [1, 4, 7],
+    [2, 5, 8],
+    [3, 6, 9],
+    // Diagonals
+    [1, 5, 9],
+    [3, 5, 7]
+  ];
 
   // Prototype methods
   Board.prototype = {

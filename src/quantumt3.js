@@ -1,9 +1,9 @@
-"use strict";
-var Board = (function() {
+var Board = (function() { "use strict";
 
   /* Make a shallow copy of an array. */
   function arrayCopy(source) {
-    var i, len = source.length, target = new Array(len);
+    var i,
+        len = source.length, target = new Array(len);
     for (i = 0; i < len; ++i) {
       target[i] = source[i];
     }
@@ -140,7 +140,8 @@ var Board = (function() {
     },
 
     scores: function () {
-      var scores = {}, tictactoes = this._tictactoes, i, tictactoe;
+      var i, tictactoe,
+          scores = {}, tictactoes = this._tictactoes;
       if (!this.gameOver()) {
         return null;
       }
@@ -169,7 +170,8 @@ var Board = (function() {
     },
 
     history: function(verbose) {
-      var history = this._history, terseHistory = [], i;
+      var i,
+          history = this._history, terseHistory = [];
       if (verbose) {
         return history;
       }
@@ -192,7 +194,8 @@ var Board = (function() {
     },
 
     _countClassicalPieces: function() {
-      var i, classical = 0;
+      var i,
+          classical = 0;
       for (i = 1; i <= 9; ++i) {
         if (!this._isQuantum(i)) {
           ++classical;
@@ -253,7 +256,7 @@ var Board = (function() {
     },
 
     _unapplyMove: function(move) {
-      var a, b, collapseState;
+      var a, b;
       this._nextType = move.type;
       this._tictactoes = [];
       if (move.type === Board.QUANTUM) {
@@ -275,15 +278,15 @@ var Board = (function() {
 
     _reachable: function(src, dest) {
       var visited = [], edges = this._edges;
-      function visit(i) {
-        var j, neighbors;
-        if (visited.indexOf(i) !== -1) {
+      function visit(c) {
+        var i, neighbors;
+        if (visited.indexOf(c) !== -1) {
           return;
         }
-        visited.push(i);
-        neighbors = edges[i - 1];
-        for (j = 0; j < neighbors.length; ++j) {
-          visit(neighbors[j]);
+        visited.push(c);
+        neighbors = edges[c - 1];
+        for (i = 0; i < neighbors.length; ++i) {
+          visit(neighbors[i]);
         }
       }
 
@@ -291,24 +294,25 @@ var Board = (function() {
       return visited.indexOf(dest) !== -1;
     },
 
-    _collapseCell: function(piece, i) {
+    _collapseCell: function(piece, c) {
       /* It seems like the last move will be collapsed into two cells here, but
        * since the moves are ordered, some other move will be collapsed into the
        * other cell before the last move is processed.
        */
-      var neighbors = this._edges[i - 1], cells = this._board[i - 1], j;
-      if (!this._isQuantum(i)) {
+      var i, 
+          neighbors = this._edges[c - 1], cells = this._board[c - 1];
+      if (!Array.isArray(cells)) {
         return;
       }
-      this._board[i - 1] = piece;
-      for (j = 0; j < neighbors.length; ++j) {
-        this._collapseCell(cells[j], neighbors[j]);
+      this._board[c - 1] = piece;
+      for (i = 0; i < neighbors.length; ++i) {
+        this._collapseCell(cells[i], neighbors[i]);
       }
     },
 
     _updateGameStatus: function() {
-      var i, j, cells, pieces, player, tictactoes = [],
-          minPiece = 9, rowMaxPiece;
+      var i, j, cells, pieces, player, minPiece, rowMaxPiece,
+          tictactoes = [];
 
       function isX(c) {
         return typeof c === 'number' && c % 2 === 1;
@@ -319,7 +323,7 @@ var Board = (function() {
       }
 
       function maxPiece(tictactoe) {
-        return Math.max.apply(this, tictactoe.pieces);
+        return Math.max.apply(null, tictactoe.pieces);
       }
 
       // Find tic-tac-toes
@@ -344,6 +348,7 @@ var Board = (function() {
       }
 
       // Score tic-tac-toes
+      minPiece = 9;
       for (i = 0; i < tictactoes.length; ++i) {
         rowMaxPiece = maxPiece(tictactoes[i]);
         if (minPiece > rowMaxPiece) {

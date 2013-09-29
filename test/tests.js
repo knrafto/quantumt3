@@ -142,7 +142,8 @@ suite("Moves", function() {
   ];
   positions.forEach(function(position) {
     test(position.start + ' (' + position.move + ')', function() {
-      var b = new Board(), result;
+      var result,
+          b = new Board();
       moveAll(b, position.start)
 
       assert.strictEqual(b.canMove(position.move), position.legal);
@@ -170,8 +171,8 @@ suite('History/Undo', function() {
   ];
   positions.forEach(function(position) {
     test(position.start + ' (' + position.move + ')', function() {
-      var b1 = new Board(), b2 = new Board(),
-          moveResult, undoResult;
+      var moveResult, undoResult,
+          b1 = new Board(), b2 = new Board();
       moveAll(b1, position.start);
       moveAll(b2, position.start);
 

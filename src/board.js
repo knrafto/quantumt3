@@ -126,6 +126,10 @@ var Board = (function() { "use strict";
       return this._placed % 2 ? Board.PLAYERO : Board.PLAYERX;
     },
 
+    nextType: function() {
+      return this._nextType;
+    },
+
     gameOver: function() {
       return !this._nextType;
     },

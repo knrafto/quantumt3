@@ -1,30 +1,33 @@
 var View = (function($) { "use strict";
 
-  function View(element, options) {
-    var i, j, c, row, cell,
-        container = $(element),
-        board = $("<div class='board'/>").appendTo(container),
-        cells = [];
+  function createTable(n, m) {
+    var i, j, c, row,
+        table = $("<table/>");
 
-    function makeHandler(thisArg, c) {
-      return function () {
-        return thisArg._onClick(c);
-      };
-    }
-
-    for (i = 0; i < 3; ++i) {
-      row = $("<div class='board-row'/>").appendTo(board);
-      for (j = 0; j < 3; ++j) {
+    for (i = 0; i < n; ++i) {
+      row = $("<tr/>").appendTo(table);
+      for (j = 0; j < m; ++j) {
         c = 3*i + j + 1;
-        cells[c - 1] = $("<div class='board-cell'/>")
-          .click(makeHandler(this, c))
-          .appendTo(row);
+        $("<td id='" + c + "'/>").appendTo(row);
       }
     }
+    return table;
+  }
+
+  function View(container, options) {
+    var i, j, c, row, cell,
+        board = createTable(3, 3).addClass("board").appendTo(container),
+        view = this;
+
+    board.find("td")
+      .addClass("cell")
+      .click(function() {
+        var cid = $(this).attr("id");
+        view._onClick(cid);
+      });
 
     this._options = options || {};
-    this._container = container;
-    this._cells = cells;
+    this._board = board;
   }
 
   View.prototype = {

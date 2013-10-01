@@ -15,15 +15,14 @@ var View = (function($) { "use strict";
   }
 
   function View(container, options) {
-    var i, j, c, row, cell,
-        board = createTable(3, 3).addClass("board").appendTo(container),
+    var board = createTable(3, 3).addClass("board").appendTo(container),
         view = this;
 
     board.find("td")
       .addClass("cell")
       .click(function() {
-        var cid = $(this).attr("id");
-        view._onClick(cid);
+        var c = $(this).attr("id");
+        view._onClick(c);
       });
 
     this._options = options || {};

@@ -8,4 +8,35 @@
   border: 5px solid #dddddd;
 }
 
+.subpiece {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+}
+
+.subpiece * {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: inherit;
+  height: inherit;
+  line-height: inherit;
+}
+
+.subpiece .piece-x {
+  content: url(../img/subpiece-x.png);
+}
+
+.subpiece .piece-o {
+  content: url(../img/subpiece-o.png);
+}
+
+.subpiece .move-text {
+  text-align: center;
+  vertical-align: middle;
+  z-index: 1;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
 }

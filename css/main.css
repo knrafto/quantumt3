@@ -65,6 +65,7 @@
 
 /* Highlights */
 .highlight {
+  position: absolute;
   width: inherit;
   height: inherit;
   z-index: -10;

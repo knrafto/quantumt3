@@ -75,13 +75,13 @@
 }
 
 .highlight.collapse {
-  background-color: #eeeeee;
+  background-color: #dddddd;
 }
 
 .highlight.x {
-  background-color: #eeeeff;
+  background-color: #ddddff;
 }
 
 .highlight.o {
-  background-color: #ffeeee;
+  background-color: #ffdddd;
 }

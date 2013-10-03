@@ -1,5 +1,12 @@
 var View = (function($) { "use strict";
 
+  $.fn.translate = function(dx, dy) {
+    var offset = this.offset();
+    offset["left"] += dx;
+    offset["top"] += dy;
+    return this.offset(offset);
+  }
+
   function createPiece(className, moveNumber) {
     var pieceClass = "piece-" + (moveNumber % 2 == 1 ? "x" : "o");
     return $("<div>")
@@ -50,6 +57,23 @@ var View = (function($) { "use strict";
     addClassical: function(c, moveNumber) {
       this._$cell(c).append(createPiece("classical-piece", moveNumber));
       return this;
+    },
+
+    addQuantum: function(c, moveNumber) {
+      var pieceSize,
+          i = Math.floor((moveNumber - 1) / 3),
+          j = (moveNumber - 1) % 3,
+          $piece = createPiece("quantum-piece", moveNumber);
+      this._$cell(c).append($piece);
+      pieceSize = $piece.width();
+      $piece.translate(j*pieceSize, i*pieceSize);
+      console.log(pieceSize);
+      return this;
+    },
+
+    removeQuantum: function(c, moveNumber) {
+      this._$cell(c).find("p:contains(" + moveNumber + ")").parent().remove();
+      return this
     }
   };
 

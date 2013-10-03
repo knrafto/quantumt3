@@ -15,23 +15,21 @@
 }
 
 .classical-piece {
-  /* Center piece */
-  margin: auto;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-
-  position: relative;
+  position: absolute;
   width: 120px;
   height: 120px;
   line-height: 120px;
 }
 
-.classical-piece * {
+.quantum-piece {
   position: absolute;
-  left: 0;
-  top: 0;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+}
+
+.classical-piece *, .quantum-piece * {
+  position: absolute;
   width: inherit;
   height: inherit;
   line-height: inherit;
@@ -45,11 +43,25 @@
   content: url(../img/cpiece-o.png);
 }
 
-.classical-piece .move-text {
+.quantum-piece .piece-x {
+  content: url(../img/qpiece-x.png);
+}
+
+.quantum-piece .piece-o {
+  content: url(../img/qpiece-o.png);
+}
+
+.move-text {
   text-align: center;
   margin: 0;
-  z-index: 1;
-  font-size: 48px;
   font-weight: bold;
   color: white;
+}
+
+.classical-piece .move-text {
+  font-size: 48px;
+}
+
+.quantum-piece .move-text {
+  font-size: 16px;
 }

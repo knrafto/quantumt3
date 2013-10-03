@@ -49,31 +49,44 @@ var View = (function($) { "use strict";
       return this._$board.find(".cell").eq(c - 1);
     },
 
-    clear: function(c) {
-      this._$cell(c).empty();
-      return this;
-    },
-
     addClassical: function(c, moveNumber) {
-      this._$cell(c).append(createPiece("classical-piece", moveNumber));
+      createPiece("classical-piece", moveNumber).appendTo(this._$cell(c));
       return this;
     },
 
     addQuantum: function(c, moveNumber) {
-      var pieceSize,
+      var pieceSize, $piece,
           i = Math.floor((moveNumber - 1) / 3),
-          j = (moveNumber - 1) % 3,
-          $piece = createPiece("quantum-piece", moveNumber);
-      this._$cell(c).append($piece);
+          j = (moveNumber - 1) % 3;
+
+      $piece = createPiece("quantum-piece", moveNumber)
+        .appendTo(this._$cell(c));
       pieceSize = $piece.width();
       $piece.translate(j*pieceSize, i*pieceSize);
-      console.log(pieceSize);
       return this;
     },
 
     removeQuantum: function(c, moveNumber) {
       this._$cell(c).find("p:contains(" + moveNumber + ")").parent().remove();
-      return this
+      return this;
+    },
+
+    clear: function(c) {
+      this._$cell(c).empty();
+      return this;
+    },
+
+    addHighlight: function(c, className) {
+      var highlight = $("<div class='highlight'>").appendTo(this._$cell(c));
+      if (className) {
+        highlight.addClass(className);
+      }
+      return this;
+    },
+
+    clearHighlight: function(c) {
+      this._$cell(c).find(".highlight").remove();
+      return this;
     }
   };
 

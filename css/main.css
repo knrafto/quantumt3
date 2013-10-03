@@ -11,9 +11,10 @@
   display: table-cell;
   width: 120px;
   height: 120px;
-  border: 5px solid #dddddd;
+  border: 5px solid #cccccc;
 }
 
+/* Pieces */
 .classical-piece {
   position: absolute;
   width: 120px;
@@ -64,4 +65,15 @@
 
 .quantum-piece .move-text {
   font-size: 16px;
+}
+
+/* Highlights */
+.highlight {
+  width: inherit;
+  height: inherit;
+  z-index: -10;
+}
+
+.highlight.collapse {
+  background-color: #dddddd;
 }

@@ -48,7 +48,7 @@ $(document).ready(function() {
     view.clearAllHighlights();
     for (i = 1; i <= 9; ++i) {
       piece = board.get(i);
-      if (!Array.isArray(i) && view.hasQuantum(i)) {
+      if (!Array.isArray(piece) && view.hasQuantum(i)) {
         view.clear(i);
         view.addClassical(i, piece);
       }

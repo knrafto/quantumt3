@@ -50,7 +50,7 @@ var View = (function($) { "use strict";
     },
 
     addClassical: function(c, moveNumber) {
-      createPiece("classical-piece", moveNumber).appendTo(this._$cell(c));
+      createPiece("classical", moveNumber).appendTo(this._$cell(c));
       return this;
     },
 
@@ -59,7 +59,7 @@ var View = (function($) { "use strict";
           i = Math.floor((moveNumber - 1) / 3),
           j = (moveNumber - 1) % 3;
 
-      $piece = createPiece("quantum-piece", moveNumber)
+      $piece = createPiece("quantum", moveNumber)
         .appendTo(this._$cell(c));
       pieceSize = $piece.width();
       $piece.translate(j*pieceSize, i*pieceSize);
@@ -69,6 +69,10 @@ var View = (function($) { "use strict";
     removeQuantum: function(c, moveNumber) {
       this._$cell(c).find("p:contains(" + moveNumber + ")").parent().remove();
       return this;
+    },
+
+    hasQuantum: function(c) {
+      return this._$cell(c).find(".quantum").length !== 0;
     },
 
     clear: function(c) {

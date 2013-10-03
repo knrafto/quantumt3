@@ -15,7 +15,7 @@
 }
 
 /* Pieces */
-.classical-piece {
+.classical {
   position: absolute;
   width: 120px;
   height: 120px;
@@ -23,7 +23,7 @@
   font-size: 48px;
 }
 
-.quantum-piece {
+.quantum {
   position: absolute;
   width: 40px;
   height: 40px;

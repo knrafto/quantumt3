@@ -122,6 +122,10 @@ var Board = (function() { "use strict";
       return this._board[i - 1];
     },
 
+    placed: function() {
+      return this._placed;
+    },
+
     turn: function() {
       return this._placed % 2 ? Board.PLAYERO : Board.PLAYERX;
     },

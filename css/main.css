@@ -73,3 +73,11 @@
 .highlight.collapse {
   background-color: #dddddd;
 }
+
+.highlight.x {
+  background-color: #ffdddd;
+}
+
+.highlight.o {
+  background-color: #ddddff;
+}

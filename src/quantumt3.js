@@ -34,6 +34,9 @@ $(document).ready(function() {
       halfMove = null;
       if (board.nextType() === Board.COLLAPSE) {
         collapseCells = cells;
+        collapseCells.forEach(function(c) {
+          view.addHighlight(c, "collapse");
+        });
       }
     }
   }
@@ -44,6 +47,9 @@ $(document).ready(function() {
     }
     var i, piece;
     board.move({type: Board.COLLAPSE, cells: c});
+    collapseCells.forEach(function(c) {
+      view.clearHighlight(c);
+    });
     for (i = 1; i <= 9; ++i) {
       piece = board.get(i);
       if (!Array.isArray(i) && view.hasQuantum(i)) {

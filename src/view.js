@@ -89,20 +89,21 @@ var View = (function($) { "use strict";
       this._$board.find(".cell").empty();
     },
 
-    addHighlight: function(c, className) {
-      var highlight = $("<div class='highlight'>").appendTo(this._$cell(c));
+    addHighlights: function(cells, className) {
+      var highlight = $("<div class='highlight'>"),
+          matchedCells = $(),
+          view = this;
       if (className) {
         highlight.addClass(className);
       }
+      cells.forEach(function(c) {
+        matchedCells = matchedCells.add(view._$cell(c));
+      });
+      matchedCells.append(highlight);
       return this;
     },
 
-    clearHighlight: function(c) {
-      this._$cell(c).find(".highlight").remove();
-      return this;
-    },
-
-    clearAllHighlights: function(c) {
+    clearHighlights: function(c) {
       this._$board.find(".highlight").remove();
       return this;
     }

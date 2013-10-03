@@ -31,11 +31,10 @@ $(document).ready(function() {
     } else {
       board.move({type: Board.QUANTUM, cells: cells});
       view.addQuantum(c, moveNumber);
-      if (board.nextType() === Board.COLLAPSE) {
-        view.addHighlight(c, "collapse");
-        view.addHighlight(halfMove, "collapse");
-      }
       halfMove = null;
+      if (board.nextType() === Board.COLLAPSE) {
+        view.addHighlights(cells, "collapse");
+      }
     }
   }
 
@@ -45,7 +44,7 @@ $(document).ready(function() {
     if (!board.move(move)) {
       return;
     }
-    view.clearAllHighlights();
+    view.clearHighlights();
     for (i = 1; i <= 9; ++i) {
       piece = board.get(i);
       if (!Array.isArray(piece) && view.hasQuantum(i)) {
@@ -70,9 +69,7 @@ $(document).ready(function() {
     var playerClass;
     board.tictactoes().forEach(function(tictactoe) {
       playerClass = tictactoe.player === Board.PLAYERX ? "x" : "o";
-      tictactoe.cells.forEach(function(c) {
-        view.addHighlight(c, playerClass);
-      });
+      view.addHighlights(tictactoe.cells, playerClass);
     });
   }
 });

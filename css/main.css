@@ -20,6 +20,7 @@
   width: 120px;
   height: 120px;
   line-height: 120px;
+  font-size: 48px;
 }
 
 .quantum-piece {
@@ -27,44 +28,35 @@
   width: 40px;
   height: 40px;
   line-height: 40px;
+  font-size: 16px;
 }
 
-.classical-piece *, .quantum-piece * {
+.piece {
   position: absolute;
-  width: inherit;
-  height: inherit;
-  line-height: inherit;
+  margin: 5%;
+  border-radius: 50%;
+  width: 90%;
+  height: 90%;
 }
 
-.classical-piece .piece-x {
-  content: url(../img/cpiece-x.png);
+.piece.x {
+  background-color: #0000ee;
 }
 
-.classical-piece .piece-o {
-  content: url(../img/cpiece-o.png);
-}
-
-.quantum-piece .piece-x {
-  content: url(../img/qpiece-x.png);
-}
-
-.quantum-piece .piece-o {
-  content: url(../img/qpiece-o.png);
+.piece.o {
+  background-color: #ee0000;
 }
 
 .move-text {
+  position: absolute;
+  width: inherit;
+  height: inherit;
   text-align: center;
   margin: 0;
+  line-height: inherit;
+  font-size: inherit;
   font-weight: bold;
   color: white;
-}
-
-.classical-piece .move-text {
-  font-size: 48px;
-}
-
-.quantum-piece .move-text {
-  font-size: 16px;
 }
 
 /* Highlights */

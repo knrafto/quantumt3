@@ -8,10 +8,10 @@ var View = (function($) { "use strict";
   }
 
   function createPiece(className, moveNumber) {
-    var pieceClass = "piece-" + (moveNumber % 2 == 1 ? "x" : "o");
+    var pieceClass = moveNumber % 2 == 1 ? "x" : "o";
     return $("<div>")
       .addClass(className)
-      .append($("<div>").addClass(pieceClass))
+      .append($("<div class='piece'>").addClass(pieceClass))
       .append($("<p class='move-text'>" + moveNumber + "</p>"));
   }
 

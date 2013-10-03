@@ -7,14 +7,6 @@ var View = (function($) { "use strict";
     return this.offset(offset);
   }
 
-  function createPiece(className, moveNumber) {
-    var pieceClass = moveNumber % 2 == 1 ? "x" : "o";
-    return $("<div>")
-      .addClass(className)
-      .append($("<div class='piece'>").addClass(pieceClass))
-      .append($("<p class='move-text'>" + moveNumber + "</p>"));
-  }
-
   function View(container) {
     var i, j, c, properties, row, board;
 
@@ -49,8 +41,22 @@ var View = (function($) { "use strict";
       return this._$board.find(".cell").eq(c - 1);
     },
 
+    _createPiece: function(className, c, moveNumber) {
+      var text, piece,
+          pieceClass = moveNumber % 2 == 1 ? "x" : "o";
+      text = $("<p class='move-text'>" + moveNumber + "</p>");
+      piece = $("<div>")
+        .addClass(className)
+        .append($("<div class='piece'>").addClass(pieceClass))
+        .append(text)
+        .appendTo(this._$cell(c));
+      // Center text vertically
+      text.css({"line-height": text.height() + "px"});
+      return piece;
+    },
+
     addClassical: function(c, moveNumber) {
-      createPiece("classical", moveNumber).appendTo(this._$cell(c));
+      this._createPiece("classical", c, moveNumber);
       return this;
     },
 
@@ -59,8 +65,7 @@ var View = (function($) { "use strict";
           i = Math.floor((moveNumber - 1) / 3),
           j = (moveNumber - 1) % 3;
 
-      $piece = createPiece("quantum", moveNumber)
-        .appendTo(this._$cell(c));
+      $piece = this._createPiece("quantum", c, moveNumber);
       pieceSize = $piece.width();
       $piece.translate(j*pieceSize, i*pieceSize);
       return this;

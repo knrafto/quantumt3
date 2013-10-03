@@ -31,25 +31,21 @@ $(document).ready(function() {
     } else {
       board.move({type: Board.QUANTUM, cells: cells});
       view.addQuantum(c, moveNumber);
-      halfMove = null;
       if (board.nextType() === Board.COLLAPSE) {
-        collapseCells = cells;
-        collapseCells.forEach(function(c) {
-          view.addHighlight(c, "collapse");
-        });
+        view.addHighlight(c, "collapse");
+        view.addHighlight(halfMove, "collapse");
       }
+      halfMove = null;
     }
   }
 
   function moveCollapse(c) {
-    if (collapseCells.indexOf(c) === -1) {
+    var i, piece,
+        move = {type: Board.COLLAPSE, cells: c};
+    if (!board.move(move)) {
       return;
     }
-    var i, piece;
-    board.move({type: Board.COLLAPSE, cells: c});
-    collapseCells.forEach(function(c) {
-      view.clearHighlight(c);
-    });
+    view.clearAllHighlights();
     for (i = 1; i <= 9; ++i) {
       piece = board.get(i);
       if (!Array.isArray(i) && view.hasQuantum(i)) {

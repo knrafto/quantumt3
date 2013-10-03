@@ -80,6 +80,10 @@ var View = (function($) { "use strict";
       return this;
     },
 
+    clearAll: function() {
+      this._$board.find(".cell").empty();
+    },
+
     addHighlight: function(c, className) {
       var highlight = $("<div class='highlight'>").appendTo(this._$cell(c));
       if (className) {
@@ -90,6 +94,11 @@ var View = (function($) { "use strict";
 
     clearHighlight: function(c) {
       this._$cell(c).find(".highlight").remove();
+      return this;
+    },
+
+    clearAllHighlights: function(c) {
+      this._$board.find(".highlight").remove();
       return this;
     }
   };

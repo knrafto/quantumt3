@@ -66,5 +66,13 @@ $(document).ready(function() {
     checkGameStatus();
   }
 
-  function checkGameStatus() {}
+  function checkGameStatus() {
+    var playerClass;
+    board.tictactoes().forEach(function(tictactoe) {
+      playerClass = tictactoe.player === Board.PLAYERX ? "x" : "o";
+      tictactoe.cells.forEach(function(c) {
+        view.addHighlight(c, playerClass);
+      });
+    });
+  }
 });

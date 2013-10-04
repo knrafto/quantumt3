@@ -1,8 +1,7 @@
 $(document).ready(function() {
   var board = new Board(),
       view = new View("#quantumt3"),
-      halfMove = null,
-      collapseCells = [];
+      halfMove = null;
   view.onClick = onClick;
 
   function onClick(c) {
@@ -48,7 +47,7 @@ $(document).ready(function() {
     for (i = 1; i <= 9; ++i) {
       piece = board.get(i);
       if (!Array.isArray(piece) && view.hasQuantum(i)) {
-        view.clear(i);
+        view.clearCell(i);
         view.addClassical(i, piece);
       }
     }
@@ -66,6 +65,9 @@ $(document).ready(function() {
   }
 
   function checkGameStatus() {
+    if (!board.gameOver()) {
+      return;
+    }
     var playerClass;
     board.tictactoes().forEach(function(tictactoe) {
       playerClass = tictactoe.player === Board.PLAYERX ? "x" : "o";

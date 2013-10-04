@@ -85,11 +85,11 @@ var View = (function($) { "use strict";
       return this._$cell(c).find(".quantum").length !== 0;
     },
 
-    clear: function(c) {
+    clearCell: function(c) {
       this._$cell(c).children().fadeRemove();
     },
 
-    clearAll: function() {
+    clear: function() {
       this._$board.find(".cell").children().fadeRemove();
     },
 

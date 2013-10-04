@@ -25,7 +25,9 @@ var View = (function($) { "use strict";
       row = $("<div class='row'>").appendTo(board);
       for (j = 0; j < 3; ++j) {
         c = 3*i + j + 1;
-        $("<div class='cell'>").click(makeHandler(this, c)).appendTo(row);
+        $("<div class='cell'>")
+          .appendTo(row)
+          .click(makeHandler(this, c));
       }
     }
     this._$board = board;
@@ -44,11 +46,10 @@ var View = (function($) { "use strict";
     },
 
     _createPiece: function(className, c, moveNumber) {
-      var text, piece,
-          pieceClass = moveNumber % 2 == 1 ? "x" : "o";
-      text = $("<p class='move-text'>" + moveNumber + "</p>");
-      piece = $("<div>")
-        .addClass(className)
+      var pieceClass = moveNumber % 2 == 1 ? "x" : "o",
+          piece = $("<div>").addClass(className),
+          text = $("<p class='move-text'>" + moveNumber + "</p>");
+      piece
         .append($("<div class='piece'>").addClass(pieceClass))
         .append(text)
         .appendTo(this._$cell(c));

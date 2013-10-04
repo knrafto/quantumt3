@@ -43,9 +43,6 @@ var Board = (function() { "use strict";
 
   /* Render a move as a string. The inverse of parseMove(s). */
   function stringifyMove(move) {
-    if (!move) {
-      return '';
-    }
     if (move.type === Board.QUANTUM) {
       return move.cells[0] + '-' + move.cells[1];
     }

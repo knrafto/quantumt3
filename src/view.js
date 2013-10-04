@@ -1,19 +1,19 @@
 var View = (function($) { "use strict";
 
-  function show(elements) {
-    elements.hide().fadeIn(150);
-  }
+  $.fn.fadeShow = function() {
+    return this.hide().fadeIn(150);
+  };
 
-  function remove(elements) {
-    elements.fadeOut(150, function() {
+  $.fn.fadeRemove = function() {
+    var elements = this;
+    return this.fadeOut(150, function() {
       elements.remove();
     });
-  }
+  };
 
   function View(container) {
-    var i, j, c, properties, row, board;
-
-    board = $("<div class='quantumt3'>").appendTo(container);
+    var i, j, c, properties, row,
+        board = $("<div class='quantumt3'>").appendTo(container);
 
     function makeHandler(view, c) {
       return function() {
@@ -28,7 +28,6 @@ var View = (function($) { "use strict";
         $("<div class='cell'>").click(makeHandler(this, c)).appendTo(row);
       }
     }
-
     this._$board = board;
   }
 
@@ -54,14 +53,12 @@ var View = (function($) { "use strict";
         .append(text)
         .appendTo(this._$cell(c));
       // Center text vertically
-      text.css({"line-height": text.css("height")});
+      text.css({"text-align": "center", "line-height": text.css("height")});
       return piece;
     },
 
     addClassical: function(c, moveNumber) {
-      var $piece = this._createPiece("classical", c, moveNumber);
-      show($piece);
-      return this;
+      this._createPiece("classical", c, moveNumber).fadeShow();
     },
 
     addQuantum: function(c, moveNumber) {
@@ -71,15 +68,16 @@ var View = (function($) { "use strict";
 
       $piece = this._createPiece("quantum", c, moveNumber);
       pieceSize = $piece.width();
-      $piece.css({"top": i*pieceSize + "px", "left": j*pieceSize + "px"})
-      show($piece);
-      return this;
+      $piece
+        .css({"top": i*pieceSize + "px", "left": j*pieceSize + "px"})
+        .fadeShow()
     },
 
     removeQuantum: function(c, moveNumber) {
-      var $piece = this._$cell(c).find("p:contains(" + moveNumber + ")").parent();
-      remove($piece);
-      return this;
+      this._$cell(c)
+        .find("p:contains(" + moveNumber + ")")
+        .parent()
+        .fadeRemove();
     },
 
     hasQuantum: function(c) {
@@ -87,29 +85,25 @@ var View = (function($) { "use strict";
     },
 
     clear: function(c) {
-      remove(this._$cell(c).children());
-      return this;
+      this._$cell(c).children().fadeRemove();
     },
 
     clearAll: function() {
-      remove(this._$board.find(".cell").children());
+      this._$board.find(".cell").children().fadeRemove();
     },
 
     addHighlights: function(cells, className) {
-      var $highlight,
-          $matchedCells = $(),
-          view = this;
+      var view = this;
       cells.forEach(function(c) {
-        $highlight = $("<div class='highlight'>").addClass(className);
-        view._$cell(c).append($highlight);
-        show($highlight);
+        $("<div class='highlight'>")
+          .addClass(className)
+          .appendTo(view._$cell(c))
+          .fadeShow();
       });
-      return this;
     },
 
     clearHighlights: function(c) {
-      remove(this._$board.find(".highlight"));
-      return this;
+      this._$board.find(".highlight").fadeRemove();
     }
   };
 

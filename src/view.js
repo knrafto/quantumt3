@@ -1,5 +1,15 @@
 var View = (function($) { "use strict";
 
+  function show(elements) {
+    elements.hide().fadeIn(150);
+  }
+
+  function remove(elements) {
+    elements.fadeOut(150, function() {
+      elements.remove();
+    });
+  }
+
   function View(container) {
     var i, j, c, properties, row, board;
 
@@ -44,12 +54,13 @@ var View = (function($) { "use strict";
         .append(text)
         .appendTo(this._$cell(c));
       // Center text vertically
-      text.css({"line-height": text.height() + "px"});
+      text.css({"line-height": text.css("height")});
       return piece;
     },
 
     addClassical: function(c, moveNumber) {
-      this._createPiece("classical", c, moveNumber);
+      var $piece = this._createPiece("classical", c, moveNumber);
+      show($piece);
       return this;
     },
 
@@ -60,12 +71,14 @@ var View = (function($) { "use strict";
 
       $piece = this._createPiece("quantum", c, moveNumber);
       pieceSize = $piece.width();
-      $piece.css({"top": i*pieceSize + "px", "left": j*pieceSize + "px"});
+      $piece.css({"top": i*pieceSize + "px", "left": j*pieceSize + "px"})
+      show($piece);
       return this;
     },
 
     removeQuantum: function(c, moveNumber) {
-      this._$cell(c).find("p:contains(" + moveNumber + ")").parent().remove();
+      var $piece = this._$cell(c).find("p:contains(" + moveNumber + ")").parent();
+      remove($piece);
       return this;
     },
 
@@ -74,30 +87,28 @@ var View = (function($) { "use strict";
     },
 
     clear: function(c) {
-      this._$cell(c).empty();
+      remove(this._$cell(c).children());
       return this;
     },
 
     clearAll: function() {
-      this._$board.find(".cell").empty();
+      remove(this._$board.find(".cell").children());
     },
 
     addHighlights: function(cells, className) {
-      var highlight = $("<div class='highlight'>"),
-          matchedCells = $(),
+      var $highlight,
+          $matchedCells = $(),
           view = this;
-      if (className) {
-        highlight.addClass(className);
-      }
       cells.forEach(function(c) {
-        matchedCells = matchedCells.add(view._$cell(c));
+        $highlight = $("<div class='highlight'>").addClass(className);
+        view._$cell(c).append($highlight);
+        show($highlight);
       });
-      matchedCells.append(highlight);
       return this;
     },
 
     clearHighlights: function(c) {
-      this._$board.find(".highlight").remove();
+      remove(this._$board.find(".highlight"));
       return this;
     }
   };

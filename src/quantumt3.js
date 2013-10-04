@@ -2,9 +2,10 @@ $(document).ready(function() {
   var board = new Board(),
       view = new View("#quantumt3"),
       halfMove = null;
-  view.onClick = onClick;
+  view.onClick = boardClicked;
+  $("#buttons button[name='new-game']").click(newGame);
 
-  function onClick(c) {
+  function boardClicked(c) {
     var nextType = board.nextType();
     if (nextType === Board.QUANTUM) {
       moveQuantum(c);
@@ -13,6 +14,12 @@ $(document).ready(function() {
     } else if (nextType === Board.CLASSICAL) {
       moveClassical(c);
     }
+  }
+
+  function newGame() {
+    board.clear();
+    view.clear();
+    halfMove = null;
   }
 
   function moveQuantum(c) {

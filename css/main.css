@@ -1,8 +1,21 @@
+#container {
+  display: table;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#buttons {
+  text-align: center;
+  padding: 10px;
+}
+
+#buttons button {
+
+}
+
 .quantumt3 {
   display: table;
   border-collapse: collapse;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .quantumt3 .row {

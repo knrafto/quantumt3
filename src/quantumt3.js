@@ -3,7 +3,8 @@ $(document).ready(function() {
       view = new View("#quantumt3"),
       halfMove = null;
   view.onClick = boardClicked;
-  $("#buttons button[name='new-game']").click(newGame);
+  $("button[name='new-game']").click(newGame);
+  $("button[name='undo']").click(undo);
 
   function boardClicked(c) {
     var nextType = board.nextType();
@@ -20,6 +21,14 @@ $(document).ready(function() {
     board.clear();
     view.clear();
     halfMove = null;
+  }
+
+  function undo() {
+    if (halfMove) {
+      view.removeQuantum(halfMove, board.placed() + 1);
+      halfMove = null;
+      return;
+    }
   }
 
   function moveQuantum(c) {

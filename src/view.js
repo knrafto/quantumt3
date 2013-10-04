@@ -1,12 +1,5 @@
 var View = (function($) { "use strict";
 
-  $.fn.translate = function(dx, dy) {
-    var offset = this.offset();
-    offset["left"] += dx;
-    offset["top"] += dy;
-    return this.offset(offset);
-  }
-
   function View(container) {
     var i, j, c, properties, row, board;
 
@@ -67,7 +60,7 @@ var View = (function($) { "use strict";
 
       $piece = this._createPiece("quantum", c, moveNumber);
       pieceSize = $piece.width();
-      $piece.translate(j*pieceSize, i*pieceSize);
+      $piece.css({"top": i*pieceSize + "px", "left": j*pieceSize + "px"});
       return this;
     },
 

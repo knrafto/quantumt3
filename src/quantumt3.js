@@ -74,7 +74,7 @@ $(document).ready(function() {
     } else if (move.type === Board.COLLAPSE) {
       syncView();
     } else if (move.type === Board.CLASSICAL) {
-      view.clearCell(c);
+      view.clearCell(move.cells);
     }
     updateHighlights();
   }
@@ -105,7 +105,6 @@ $(document).ready(function() {
     if (board.gameOver()) {
       updateTictactoeHighlights();
       scores = stringifyScores();
-      console.log(scores);
       $("#scores").text(scores).slideDown();
     } else {
       $("#scores").hide();

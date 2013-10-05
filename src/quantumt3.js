@@ -2,9 +2,11 @@ $(document).ready(function() {
   var board = new Board(),
       view = new View("#quantumt3"),
       halfMove = null;
+
   view.onClick = boardClicked;
   $("button[name='new-game']").click(newGame);
   $("button[name='undo']").click(undo);
+  $("#scores").hide();
 
   function boardClicked(c) {
     var nextType = board.nextType(),
@@ -47,6 +49,7 @@ $(document).ready(function() {
     board.clear();
     view.clear();
     halfMove = null;
+    $("#scores").hide()
   }
 
   function undo() {
@@ -92,19 +95,53 @@ $(document).ready(function() {
   }
 
   function updateHighlights() {
-    var cells, playerClass;
     view.clearHighlights();
 
     if (board.nextType() === Board.COLLAPSE) {
-      cells = [];
-      for (i = 1; i <= 9; ++i) {
-        if (board.canMove({type: Board.COLLAPSE, cells: i})) {
-          cells.push(i);
-        }
-      }
-      view.addHighlights(cells, "collapse");
+      updateCollapseHighlights();
     }
 
+    if (board.gameOver()) {
+      updateTictactoeHighlights();
+      scores = stringifyScores();
+      console.log(scores);
+      $("#scores").text(scores).slideDown();
+    } else {
+      $("#scores").hide();
+    }
+  }
+
+  function stringifyScores() {
+    var scores = board.scores();
+
+    function stringify(player) {
+      var result,
+          half = "\u00bd"
+          score = scores[player];
+      switch (score) {
+        case 0: return "0";
+        case 1: return half;
+        case 2: return "1";
+        case 3: return "1" + half;
+        case 4: return "2";
+      }
+      return "";
+    }
+
+    return stringify(Board.PLAYERX) + " \u2014 " + stringify(Board.PLAYERO);
+  }
+
+  function updateCollapseHighlights() {
+    var i;
+    for (i = 1; i <= 9; ++i) {
+      if (board.canMove({type: Board.COLLAPSE, cells: i})) {
+        view.addHighlight(i, "collapse");
+      }
+    }
+  }
+
+  function updateTictactoeHighlights() {
+    var playerClass;
     board.tictactoes().forEach(function(tictactoe) {
       playerClass = tictactoe.player === Board.PLAYERX ? "x" : "o";
       view.addHighlights(tictactoe.cells, playerClass);

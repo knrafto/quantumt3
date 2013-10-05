@@ -97,13 +97,17 @@ var View = (function($) { "use strict";
       this._$board.find(".cell").children().fadeRemove();
     },
 
+    addHighlight: function(c, className) {
+      $("<div class='highlight'>")
+        .addClass(className)
+        .appendTo(this._$cell(c))
+        .fadeShow();
+    },
+
     addHighlights: function(cells, className) {
       var view = this;
       cells.forEach(function(c) {
-        $("<div class='highlight'>")
-          .addClass(className)
-          .appendTo(view._$cell(c))
-          .fadeShow();
+        view.addHighlight(c, className);
       });
     },
 

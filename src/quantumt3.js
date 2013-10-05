@@ -7,8 +7,7 @@ $(document).ready(function() {
   $("button[name='undo']").click(undo);
 
   function boardClicked(c) {
-    var i, piece,
-        nextType = board.nextType(),
+    var nextType = board.nextType(),
         moveNumber = board.placed() + 1,
         move = null;
 
@@ -36,13 +35,7 @@ $(document).ready(function() {
       halfMove = null;
       view.addQuantum(c, moveNumber);
     } else if (nextType === Board.COLLAPSE) {
-      for (i = 1; i <= 9; ++i) {
-        piece = board.get(i);
-        if (!Array.isArray(piece) && view.hasQuantum(i)) {
-          view.clearCell(i);
-          view.addClassical(i, piece);
-        }
-      }
+      syncView();
     } else if (nextType === Board.CLASSICAL) {
       view.addClassical(c, moveNumber);
     }
@@ -57,8 +50,7 @@ $(document).ready(function() {
   }
 
   function undo() {
-    var i, piece,
-        moveNumber = board.placed() + 1;
+    var moveNumber = board.placed() + 1;
 
     if (halfMove) {
       view.removeQuantum(halfMove, moveNumber);
@@ -76,19 +68,27 @@ $(document).ready(function() {
       view.removeQuantum(move.cells[0], moveNumber);
       view.removeQuantum(move.cells[1], moveNumber);
     } else if (move.type === Board.COLLAPSE) {
-      for (i = 1; i <= 9; ++i) {
-        piece = board.get(i);
-        if (Array.isArray(piece) && view.hasClassical(i)) {
-          view.clearCell(i);
-          piece.forEach(function(moveNumber) {
-            view.addQuantum(i, moveNumber);
-          });
-        }
-      }
+      syncView();
     } else if (move.type === Board.CLASSICAL) {
       view.clearCell(c);
     }
     updateHighlights();
+  }
+
+  function syncView() {
+    var i, piece;
+    for (i = 1; i <= 9; ++i) {
+      piece = board.get(i);
+      if (!Array.isArray(piece) && view.hasQuantum(i)) {
+        view.clearCell(i);
+        view.addClassical(i, piece);
+      } else if (Array.isArray(piece) && view.hasClassical(i)) {
+        view.clearCell(i);
+        piece.forEach(function(moveNumber) {
+          view.addQuantum(i, moveNumber);
+        });
+      }
+    }
   }
 
   function updateHighlights() {

@@ -2,25 +2,22 @@
   display: table;
   margin-left: auto;
   margin-right: auto;
-}
-
-#buttons {
   text-align: center;
-  padding: 10px;
 }
 
-#buttons button {
-
+#game-title {
+  font-size: 24px;
+  margin: 10px;
 }
 
 #scores {
-  text-align: center;
   font-size: 24px;
 }
 
 .quantumt3 {
   display: table;
   border-collapse: collapse;
+  margin: 10px;
 }
 
 .quantumt3 .row {

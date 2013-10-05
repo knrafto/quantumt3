@@ -7,14 +7,47 @@ $(document).ready(function() {
   $("button[name='undo']").click(undo);
 
   function boardClicked(c) {
-    var nextType = board.nextType();
+    var i, piece,
+        nextType = board.nextType(),
+        moveNumber = board.placed() + 1,
+        move = null;
+
     if (nextType === Board.QUANTUM) {
-      moveQuantum(c);
+      if (halfMove === null && Array.isArray(board.get(c))) {
+        view.addQuantum(c, moveNumber);
+        halfMove = c;
+      } else if (halfMove === c) {
+        view.removeQuantum(c, moveNumber);
+        halfMove = null;
+      } else {
+        move = {type: Board.QUANTUM, cells: [c, halfMove]};
+      }
     } else if (nextType === Board.COLLAPSE) {
-      moveCollapse(c);
+      move = {type: Board.COLLAPSE, cells: c};
     } else if (nextType === Board.CLASSICAL) {
-      moveClassical(c);
+      move = {type: Board.CLASSICAL, cells: c};
     }
+
+    if (!(move && board.move(move))) {
+      return;
+    }
+
+    if (nextType === Board.QUANTUM) {
+      halfMove = null;
+      view.addQuantum(c, moveNumber);
+    } else if (nextType === Board.COLLAPSE) {
+      for (i = 1; i <= 9; ++i) {
+        piece = board.get(i);
+        if (!Array.isArray(piece) && view.hasQuantum(i)) {
+          view.clearCell(i);
+          view.addClassical(i, piece);
+        }
+      }
+    } else if (nextType === Board.CLASSICAL) {
+      view.addClassical(c, moveNumber);
+    }
+
+    updateHighlights();
   }
 
   function newGame() {
@@ -24,67 +57,54 @@ $(document).ready(function() {
   }
 
   function undo() {
-    if (halfMove) {
-      view.removeQuantum(halfMove, board.placed() + 1);
-      halfMove = null;
-      return;
-    }
-  }
-
-  function moveQuantum(c) {
-    if (!Array.isArray(board.get(c))) {
-      return;
-    }
-    var cells = [c, halfMove],
-        moveNumber = board.placed() + 1;
-    if (halfMove === null) {
-      view.addQuantum(c, moveNumber);
-      halfMove = c;
-    } else if (halfMove === c) {
-      view.removeQuantum(c, moveNumber);
-      halfMove = null;
-    } else {
-      board.move({type: Board.QUANTUM, cells: cells});
-      view.addQuantum(c, moveNumber);
-      halfMove = null;
-      if (board.nextType() === Board.COLLAPSE) {
-        view.addHighlights(cells, "collapse");
-      }
-    }
-  }
-
-  function moveCollapse(c) {
     var i, piece,
-        move = {type: Board.COLLAPSE, cells: c};
-    if (!board.move(move)) {
+        moveNumber = board.placed() + 1;
+
+    if (halfMove) {
+      view.removeQuantum(halfMove, moveNumber);
+      halfMove = null;
       return;
     }
-    view.clearHighlights();
-    for (i = 1; i <= 9; ++i) {
-      piece = board.get(i);
-      if (!Array.isArray(piece) && view.hasQuantum(i)) {
-        view.clearCell(i);
-        view.addClassical(i, piece);
+
+    var move = board.undo();
+    moveNumber -= 1;
+    if (!move) {
+      return;
+    }
+
+    if (move.type === Board.QUANTUM) {
+      view.removeQuantum(move.cells[0], moveNumber);
+      view.removeQuantum(move.cells[1], moveNumber);
+    } else if (move.type === Board.COLLAPSE) {
+      for (i = 1; i <= 9; ++i) {
+        piece = board.get(i);
+        if (Array.isArray(piece) && view.hasClassical(i)) {
+          view.clearCell(i);
+          piece.forEach(function(moveNumber) {
+            view.addQuantum(i, moveNumber);
+          });
+        }
       }
+    } else if (move.type === Board.CLASSICAL) {
+      view.clearCell(c);
     }
-    checkGameStatus();
+    updateHighlights();
   }
 
-  function moveClassical(c) {
-    if (!Array.isArray(board.get(c))) {
-      return;
-    }
-    var moveNumber = board.placed() + 1;
-    board.move({type: Board.CLASSICAL, cells: c});
-    view.addClassical(c, moveNumber);
-    checkGameStatus();
-  }
+  function updateHighlights() {
+    var cells, playerClass;
+    view.clearHighlights();
 
-  function checkGameStatus() {
-    if (!board.gameOver()) {
-      return;
+    if (board.nextType() === Board.COLLAPSE) {
+      cells = [];
+      for (i = 1; i <= 9; ++i) {
+        if (board.canMove({type: Board.COLLAPSE, cells: i})) {
+          cells.push(i);
+        }
+      }
+      view.addHighlights(cells, "collapse");
     }
-    var playerClass;
+
     board.tictactoes().forEach(function(tictactoe) {
       playerClass = tictactoe.player === Board.PLAYERX ? "x" : "o";
       view.addHighlights(tictactoe.cells, playerClass);

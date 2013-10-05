@@ -62,6 +62,10 @@ var View = (function($) { "use strict";
       this._createPiece("classical", c, moveNumber).fadeShow();
     },
 
+    hasClassical: function(c) {
+      return this._$cell(c).find(".classical").length !== 0;
+    },
+
     addQuantum: function(c, moveNumber) {
       var pieceSize, $piece,
           i = Math.floor((moveNumber - 1) / 3),

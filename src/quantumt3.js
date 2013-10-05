@@ -6,6 +6,7 @@ $(document).ready(function() {
   view.onClick = boardClicked;
   $("button[name='new-game']").click(newGame);
   $("button[name='undo']").click(undo);
+  $("button[name='rules']").click(openRules);
   $("#scores").hide();
 
   function boardClicked(c) {
@@ -146,5 +147,9 @@ $(document).ready(function() {
       playerClass = tictactoe.player === Board.PLAYERX ? "x" : "o";
       view.addHighlights(tictactoe.cells, playerClass);
     });
+  }
+
+  function openRules() {
+    window.open("http://www.wikipedia.org/wiki/Quantum_tic-tac-toe", "_blank");
   }
 });

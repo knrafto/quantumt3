@@ -28,7 +28,7 @@
   width: 120px;
   height: 120px;
   font-size: 48px;
-  border: 5px solid #cccccc;
+  border: 5px solid #ccc;
 }
 
 /* Pieces */
@@ -59,11 +59,11 @@
 }
 
 .piece.x {
-  background-color: #0000ee;
+  background-color: #00e;
 }
 
 .piece.o {
-  background-color: #ee0000;
+  background-color: #e00;
 }
 
 .move-text {
@@ -86,13 +86,13 @@
 }
 
 .highlight.collapse {
-  background-color: #dddddd;
+  background-color: #ddd;
 }
 
 .highlight.x {
-  background-color: #ddddff;
+  background-color: #ccf;
 }
 
 .highlight.o {
-  background-color: #ffdddd;
+  background-color: #fcc;
 }

@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function() { "use strict";
   var board = new Board(),
       view = new View("#quantumt3"),
       halfMove = null;

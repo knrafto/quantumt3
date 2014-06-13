@@ -104,7 +104,7 @@ $(document).ready(function() { "use strict";
 
     if (board.gameOver()) {
       updateTictactoeHighlights();
-      scores = stringifyScores();
+      var scores = stringifyScores();
       $("#scores").text(scores).slideDown();
     } else {
       $("#scores").hide();
@@ -116,7 +116,7 @@ $(document).ready(function() { "use strict";
 
     function stringify(player) {
       var result,
-          half = "\u00bd"
+          half = "\u00bd",
           score = scores[player];
       switch (score) {
         case 0: return "0";

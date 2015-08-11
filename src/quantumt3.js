@@ -7,6 +7,7 @@ $(document).ready(function() { "use strict";
   $("button[name='new-game']").click(newGame);
   $("button[name='undo']").click(undo);
   $("button[name='rules']").click(openRules);
+  $("button[name='source']").click(openSource);
   $("#scores").hide();
 
   function boardClicked(c) {
@@ -150,5 +151,9 @@ $(document).ready(function() { "use strict";
 
   function openRules() {
     window.open("http://www.wikipedia.org/wiki/Quantum_tic-tac-toe", "_blank");
+  }
+
+  function openSource() {
+    window.open("http://github.com/knrafto/quantumt3", "_blank");
   }
 });

@@ -150,10 +150,10 @@ $(document).ready(function() { "use strict";
   }
 
   function openRules() {
-    window.open("http://www.wikipedia.org/wiki/Quantum_tic-tac-toe", "_blank");
+    window.open("https://www.wikipedia.org/wiki/Quantum_tic-tac-toe", "_blank");
   }
 
   function openSource() {
-    window.open("http://github.com/knrafto/quantumt3", "_blank");
+    window.open("https://github.com/knrafto/quantumt3", "_blank");
   }
 });
